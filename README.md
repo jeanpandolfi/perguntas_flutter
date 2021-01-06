@@ -1,6 +1,6 @@
 # projeto_perguntas
 
-Projet do Curso da Cod3r.
+Projeto do Curso da Cod3r.
 
 ## Getting Started
 
