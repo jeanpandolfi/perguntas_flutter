@@ -1,67 +1,83 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_perguntas/questao.dart';
-import 'package:projeto_perguntas/resposta.dart';
+import 'package:projeto_perguntas/questionario.dart';
 import 'package:projeto_perguntas/resultado.dart';
 
-main(){
+main() {
   runApp(new PerguntaApp());
 }
 
-class PerguntaApp extends StatefulWidget{
-
+class PerguntaApp extends StatefulWidget {
   @override
   _PerguntaAppState createState() => _PerguntaAppState();
-
 }
 
 class _PerguntaAppState extends State<PerguntaApp> {
-
   List<Map<String, Object>> _perguntas = const [
     {
       'texto': "Qual é a sua cor favorida?",
-      'respostas': ['Preto', 'Azul', 'Vermelho', 'Verde']
+      'respostas': [
+        {'texto': 'Preto', 'nota': 10},
+        {'texto': 'Azul', 'nota': 5},
+        {'texto': 'Vermelho', 'nota': 3},
+        {'texto': 'Verde', 'nota': 1}
+      ]
     },
     {
       'texto': "Qual é a sua comida favorita?",
-      'respostas': ['Arroz', 'Feijão', 'Carne', 'Verdura']
+      'respostas': [
+        {'texto': 'Arroz', 'nota': 10},
+        {'texto': 'Feijão', 'nota': 5},
+        {'texto': 'Carne', 'nota': 3},
+        {'texto': 'Verdura', 'nota': 1}
+      ]
     },
     {
       'texto': "Qual é o seu animal favorito?",
-      'respostas': ['Gato', 'Dog', 'Coleiro tui tui', 'Peixe']
+      'respostas': [
+        {'texto': 'Gato', 'nota': 10},
+        {'texto': 'Dog', 'nota': 5},
+        {'texto': 'Coleiro tui tui', 'nota': 3},
+        {'texto': 'Peixe', 'nota': 1}
+      ]
     }
   ];
 
-  var _perguntaSelecionada = 0;
+  int _perguntaSelecionada = 0;
+  int _pontuacaoTotal = 0;
 
-  bool get temPerguntaSelecionada{
+  bool get temPerguntaSelecionada {
     return _perguntaSelecionada < _perguntas.length;
   }
 
-  void _responder(){
-    if(temPerguntaSelecionada){
+  void _responder(int pontuacao) {
+    if (temPerguntaSelecionada) {
       setState(() {
         this._perguntaSelecionada++;
+        this._pontuacaoTotal += pontuacao;
       });
     }
   }
 
+  void _reiniciarQuestionario(){
+    setState(() {
+      this._pontuacaoTotal = 0;
+      this._perguntaSelecionada = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    List<String> repostas = temPerguntaSelecionada ? _perguntas[_perguntaSelecionada]['respostas'] : null;
-    List<Widget> widgetsResposta = repostas != null ? repostas.map((e) => new Resposta(e, _responder)).toList() : null;
-
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: Text("Perguntas"),
         ),
-        body: temPerguntaSelecionada ? Column(
-          children: [
-            Questao(_perguntas[_perguntaSelecionada]['texto']),
-            ...widgetsResposta
-          ],
-        ) : Resultado(),
+        body: temPerguntaSelecionada
+            ? Questionario(
+                perguntas: _perguntas,
+                perguntaSelecionada: _perguntaSelecionada,
+                quandoResponder: _responder)
+            : Resultado( pontuacaoTotal: _pontuacaoTotal, quandoReiniciarQuestionario: _reiniciarQuestionario,),
       ),
     );
   }
